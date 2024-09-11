@@ -191,6 +191,7 @@ export default function UWVChatbot() {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             className="flex-grow border border-[#007bc7] p-2 rounded"
+            style={{ color: 'black' }} // Voeg deze regel toe
           />
           <button
             onClick={handleSend}
