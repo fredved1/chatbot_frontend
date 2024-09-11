@@ -124,10 +124,16 @@ export default function UWVChatbot() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
+      <Image 
+        src="/uwv-logo.png" 
+        alt="UWV Logo" 
+        width={40} 
+        height={40} 
+        className="mr-2"
+      />
       <header className="bg-[#007bc7] text-white p-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center">
-            <Image src="/uwv-logo.png" alt="UWV Logo" width={40} height={40} className="mr-2" />
             <h1 className="text-2xl font-bold">UWV Chatbot</h1>
           </div>
           <div className="flex items-center space-x-2">
