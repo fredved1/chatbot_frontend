@@ -123,24 +123,24 @@ export default function UWVChatbot() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
-      <Image 
-        src="/uwv-logo.png" 
-        alt="UWV Logo" 
-        width={40} 
-        height={40} 
-        className="mr-2"
-      />
-      <header className="bg-[#007bc7] text-white p-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
+    <div className="flex flex-col h-screen sm:h-[700px] w-full sm:max-w-md mx-auto bg-gray-100 shadow-lg rounded-lg overflow-hidden">
+      <header className="bg-[#007bc7] text-white p-2 sm:p-3">
+        <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <h1 className="text-2xl font-bold">UWV Chatbot</h1>
+            <Image 
+              src="/uwv-logo.png" 
+              alt="UWV Logo" 
+              width={20} 
+              height={20} 
+              className="mr-2 sm:w-6 sm:h-6"
+            />
+            <h1 className="text-base sm:text-lg font-bold">UWV Chatbot</h1>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1 sm:space-x-2">
             <select
               value={selectedModel}
               onChange={(e) => handleSelectModel(e.target.value)}
-              className="bg-white text-[#007bc7] border border-[#007bc7] rounded p-2 text-sm"
+              className="bg-white text-[#007bc7] border border-[#007bc7] rounded p-1 text-xs sm:text-sm"
             >
               {models.map((model) => (
                 <option key={model} value={model}>
@@ -150,61 +150,81 @@ export default function UWVChatbot() {
             </select>
             <button
               onClick={startNewConversation}
-              className="bg-white text-[#007bc7] border border-[#007bc7] hover:bg-[#e6f2ff] px-3 py-2 rounded text-sm"
+              className="bg-white text-[#007bc7] border border-[#007bc7] hover:bg-[#e6f2ff] px-1 py-1 rounded text-xs sm:text-sm"
             >
-              Nieuwe conversatie
+              Nieuw
             </button>
             <button
               onClick={handleClearMemory}
-              className="bg-white text-[#007bc7] border border-[#007bc7] hover:bg-[#e6f2ff] px-3 py-2 rounded text-sm"
+              className="bg-white text-[#007bc7] border border-[#007bc7] hover:bg-[#e6f2ff] px-1 py-1 rounded text-xs sm:text-sm"
             >
-              Wis geheugen
+              Wis
             </button>
           </div>
         </div>
       </header>
-      <main className="flex-grow overflow-auto p-4">
-        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-          <div className="space-y-4">
-            {messages.map((message, index) => (
+      <main className="flex-grow overflow-auto p-2 sm:p-3">
+        <div className="space-y-2 sm:space-y-3">
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={`flex items-start ${
+                message.role === 'user' ? 'justify-end' : 'justify-start'
+              }`}
+            >
+              {message.role === 'assistant' && (
+                <div className="flex-shrink-0 mr-1 sm:mr-2">
+                  <Image
+                    src="/ai-icon.png"
+                    alt="AI"
+                    width={20}
+                    height={20}
+                    className="rounded-full sm:w-6 sm:h-6"
+                  />
+                </div>
+              )}
               <div
-                key={index}
-                className={`flex ${
-                  message.role === 'user' ? 'justify-end' : 'justify-start'
+                className={`max-w-[75%] p-2 rounded-lg text-sm ${
+                  message.role === 'user'
+                    ? 'bg-[#007bc7] text-white'
+                    : 'bg-gray-200 text-[#333333]'
                 }`}
               >
-                <div
-                  className={`max-w-[70%] p-3 rounded-lg ${
-                    message.role === 'user'
-                      ? 'bg-[#007bc7] text-white'
-                      : 'bg-gray-100 text-[#333333]'
-                  }`}
-                >
-                  {message.content}
-                </div>
+                {message.content}
               </div>
-            ))}
-          </div>
-          <div ref={messagesEndRef} />
+              {message.role === 'user' && (
+                <div className="flex-shrink-0 ml-1 sm:ml-2">
+                  <Image
+                    src="/user-icon.png"
+                    alt="User"
+                    width={20}
+                    height={20}
+                    className="rounded-full sm:w-6 sm:h-6"
+                  />
+                </div>
+              )}
+            </div>
+          ))}
         </div>
+        <div ref={messagesEndRef} />
       </main>
-      <footer className="bg-white p-4 border-t border-gray-200">
-        <div className="max-w-4xl mx-auto flex space-x-2">
+      <footer className="bg-white p-2 sm:p-3 border-t border-gray-200">
+        <div className="flex space-x-2">
           <input
             type="text"
             placeholder="Typ uw vraag hier..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            className="flex-grow border border-[#007bc7] p-2 rounded"
-            style={{ color: 'black' }} // Voeg deze regel toe
+            className="flex-grow border border-[#007bc7] p-1 sm:p-2 rounded text-sm"
+            style={{ color: 'black' }}
           />
           <button
             onClick={handleSend}
             disabled={isLoading}
-            className="bg-[#007bc7] text-white hover:bg-[#005b9e] px-4 py-2 rounded disabled:opacity-50"
+            className="bg-[#007bc7] text-white hover:bg-[#005b9e] px-2 py-1 rounded disabled:opacity-50 text-sm"
           >
-            {isLoading ? 'Verzenden...' : 'Verzend'}
+            {isLoading ? '...' : 'Zend'}
           </button>
         </div>
       </footer>
