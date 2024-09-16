@@ -114,18 +114,6 @@ export default function UWVChatbot() {
     }
   }
 
-  const handleClearMemory = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/clear-memory`, { method: 'POST' })
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-      setMessages([{ role: 'assistant', content: 'Geheugen is gewist. Hoe kan ik u verder helpen?' }])
-    } catch (error) {
-      console.error('Error clearing memory:', error)
-    }
-  }
-
   return (
     <div className="flex flex-col h-screen max-h-[600px] w-full sm:max-w-md mx-auto bg-gray-100 shadow-lg rounded-lg overflow-hidden">
       <header className="bg-[#007bc7] text-white p-2 flex-shrink-0">
