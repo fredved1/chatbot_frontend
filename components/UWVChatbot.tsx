@@ -191,10 +191,18 @@ export default function UWVChatbot() {
                     h1: ({children, ...props}) => <h1 className="text-lg font-bold mb-2" {...props}>{children}</h1>,
                     h2: ({children, ...props}) => <h2 className="text-base font-semibold mb-2" {...props}>{children}</h2>,
                     h3: ({children, ...props}) => <h3 className="text-sm font-medium mb-1" {...props}>{children}</h3>,
-                    code: ({inline, children, ...props}) => 
-                      inline 
-                        ? <code className="bg-gray-100 text-red-500 px-1 rounded" {...props}>{children}</code>
-                        : <code className="block bg-gray-100 p-2 rounded mb-2 overflow-x-auto" {...props}>{children}</code>,
+                    code: ({node, inline, className, children, ...props}) => {
+                      const match = /language-(\w+)/.exec(className || '')
+                      return !inline && match ? (
+                        <code className="block bg-gray-100 p-2 rounded mb-2 overflow-x-auto" {...props}>
+                          {children}
+                        </code>
+                      ) : (
+                        <code className="bg-gray-100 text-red-500 px-1 rounded" {...props}>
+                          {children}
+                        </code>
+                      )
+                    },
                   }}
                 >
                   {message.content}
