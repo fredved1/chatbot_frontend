@@ -69,9 +69,17 @@ export default function UWVChatbot() {
   return (
     <div className="flex flex-col h-screen max-h-[600px] w-full sm:max-w-md mx-auto bg-gray-100 shadow-lg rounded-lg overflow-hidden">
       <header className="bg-[#007bc7] text-white p-2 flex-shrink-0">
-        <div className="flex items-center">
-          <Image src="/uwv-logo.png" alt="UWV Logo" width={20} height={20} className="mr-2" />
-          <h1 className="text-base font-bold">UWV Chatbot</h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Image src="/uwv-logo.png" alt="UWV Logo" width={20} height={20} className="mr-2" />
+            <h1 className="text-base font-bold">UWV Chatbot</h1>
+          </div>
+          <button
+            onClick={startNewConversation}
+            className="bg-white text-[#007bc7] border border-[#007bc7] hover:bg-[#e6f2ff] px-2 py-1 rounded text-xs"
+          >
+            Nieuw
+          </button>
         </div>
       </header>
       <main className="flex-grow overflow-auto p-2 min-h-0">
