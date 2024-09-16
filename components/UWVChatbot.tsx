@@ -2,13 +2,17 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
+import ReactMarkdown from 'react-markdown'
 
 type Message = {
   role: 'user' | 'assistant'
   content: string
 }
 
-const API_URL = 'https://uwvchatbot-f850ea49bdeb.herokuapp.com'
+// Test lokaal of via heroku
+// const API_URL = 'https://uwvchatbot-f850ea49bdeb.herokuapp.com'
+const API_URL = 'http://localhost:5001'
+
 
 export default function UWVChatbot() {
   const [messages, setMessages] = useState<Message[]>([])
@@ -80,13 +84,13 @@ export default function UWVChatbot() {
         body: JSON.stringify({ message: input }),
       })
       if (!response.ok) {
-        throw new Error('Network response was not ok')
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
       const data = await response.json()
       setMessages(prev => [...prev, { role: 'assistant', content: data.response }])
     } catch (error) {
       console.error('Error sending message:', error)
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, er is een fout opgetreden.' }])
+      setMessages(prev => [...prev, { role: 'assistant', content: `Sorry, er is een fout opgetreden: ${error.message}` }])
     } finally {
       setIsLoading(false)
     }
@@ -123,7 +127,7 @@ export default function UWVChatbot() {
   }
 
   return (
-    <div className="flex flex-col h-[100dvh] w-full sm:max-w-md mx-auto bg-gray-100 shadow-lg rounded-lg overflow-hidden">
+    <div className="flex flex-col h-screen max-h-[600px] w-full sm:max-w-md mx-auto bg-gray-100 shadow-lg rounded-lg overflow-hidden">
       <header className="bg-[#007bc7] text-white p-2 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
@@ -154,16 +158,10 @@ export default function UWVChatbot() {
             >
               Nieuw
             </button>
-            <button
-              onClick={handleClearMemory}
-              className="bg-white text-[#007bc7] border border-[#007bc7] hover:bg-[#e6f2ff] px-1 py-1 rounded text-xs"
-            >
-              Wis
-            </button>
           </div>
         </div>
       </header>
-      <main className="flex-grow overflow-auto p-2">
+      <main className="flex-grow overflow-auto p-2 min-h-0">
         <div className="space-y-2">
           {messages.map((message, index) => (
             <div
@@ -180,17 +178,36 @@ export default function UWVChatbot() {
                     width={16}
                     height={16}
                     className="rounded-full"
+                    onError={(e) => {
+                      e.currentTarget.src = "/fallback-icon.png"
+                    }}
                   />
                 </div>
               )}
               <div
-                className={`max-w-[75%] p-2 rounded-lg text-xs ${
+                className={`max-w-[75%] p-2 rounded-lg text-xs overflow-hidden ${
                   message.role === 'user'
                     ? 'bg-[#007bc7] text-white'
                     : 'bg-gray-200 text-[#333333]'
                 }`}
               >
-                {message.content}
+                <ReactMarkdown
+                  components={{
+                    p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                    ul: ({node, ...props}) => <ul className="list-disc pl-4 mb-2" {...props} />,
+                    ol: ({node, ...props}) => <ol className="list-decimal pl-4 mb-2" {...props} />,
+                    li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                    h1: ({node, ...props}) => <h1 className="text-lg font-bold mb-2" {...props} />,
+                    h2: ({node, ...props}) => <h2 className="text-base font-semibold mb-2" {...props} />,
+                    h3: ({node, ...props}) => <h3 className="text-sm font-medium mb-1" {...props} />,
+                    code: ({node, inline, ...props}) => 
+                      inline 
+                        ? <code className="bg-gray-100 text-red-500 px-1 rounded" {...props} />
+                        : <code className="block bg-gray-100 p-2 rounded mb-2 overflow-x-auto" {...props} />,
+                  }}
+                >
+                  {message.content}
+                </ReactMarkdown>
               </div>
               {message.role === 'user' && (
                 <div className="flex-shrink-0 ml-1">
