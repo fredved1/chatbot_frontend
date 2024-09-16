@@ -88,9 +88,12 @@ export default function UWVChatbot() {
       }
       const data = await response.json()
       setMessages(prev => [...prev, { role: 'assistant', content: data.response }])
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error)
-      setMessages(prev => [...prev, { role: 'assistant', content: `Sorry, er is een fout opgetreden: ${error.message}` }])
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: `Sorry, er is een fout opgetreden: ${error.message || 'Onbekende fout'}` 
+      }])
     } finally {
       setIsLoading(false)
     }
