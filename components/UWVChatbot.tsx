@@ -181,17 +181,17 @@ export default function UWVChatbot() {
               >
                 <ReactMarkdown
                   components={{
-                    p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
-                    ul: ({node, ...props}) => <ul className="list-disc pl-4 mb-2" {...props} />,
-                    ol: ({node, ...props}) => <ol className="list-decimal pl-4 mb-2" {...props} />,
-                    li: ({node, ...props}) => <li className="mb-1" {...props} />,
-                    h1: ({node, ...props}) => <h1 className="text-lg font-bold mb-2" {...props} />,
-                    h2: ({node, ...props}) => <h2 className="text-base font-semibold mb-2" {...props} />,
-                    h3: ({node, ...props}) => <h3 className="text-sm font-medium mb-1" {...props} />,
-                    code: ({node, inline, ...props}) => 
+                    p: ({children, ...props}) => <p className="mb-2 last:mb-0" {...props}>{children}</p>,
+                    ul: ({children, ...props}) => <ul className="list-disc pl-4 mb-2" {...props}>{children}</ul>,
+                    ol: ({children, ...props}) => <ol className="list-decimal pl-4 mb-2" {...props}>{children}</ol>,
+                    li: ({children, ...props}) => <li className="mb-1" {...props}>{children}</li>,
+                    h1: ({children, ...props}) => <h1 className="text-lg font-bold mb-2" {...props}>{children}</h1>,
+                    h2: ({children, ...props}) => <h2 className="text-base font-semibold mb-2" {...props}>{children}</h2>,
+                    h3: ({children, ...props}) => <h3 className="text-sm font-medium mb-1" {...props}>{children}</h3>,
+                    code: ({inline, children, ...props}) => 
                       inline 
-                        ? <code className="bg-gray-100 text-red-500 px-1 rounded" {...props} />
-                        : <code className="block bg-gray-100 p-2 rounded mb-2 overflow-x-auto" {...props} />,
+                        ? <code className="bg-gray-100 text-red-500 px-1 rounded" {...props}>{children}</code>
+                        : <code className="block bg-gray-100 p-2 rounded mb-2 overflow-x-auto" {...props}>{children}</code>,
                   }}
                 >
                   {message.content}
