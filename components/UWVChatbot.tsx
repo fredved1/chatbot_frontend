@@ -11,6 +11,8 @@ type Message = {
 
 const API_URL = 'http://localhost:5001'
 
+const defaultMarkdown = 'No content available.'
+
 export default function UWVChatbot() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
@@ -80,27 +82,11 @@ export default function UWVChatbot() {
       : `${baseClass} bg-gray-200 text-[#333333]`
   }
 
-  const components = {
-    p: ({ children }: { children: React.ReactNode }) => <p className="mb-1">{children}</p>,
-    ul: ({ children }: { children: React.ReactNode }) => <ul className="list-disc pl-4 mb-1">{children}</ul>,
-    ol: ({ children }: { children: React.ReactNode }) => <ol className="list-decimal pl-4 mb-1">{children}</ol>,
-    li: ({ children }: { children: React.ReactNode }) => <li className="mb-0.5">{children}</li>,
-    a: ({ href, children }: { href?: string, children: React.ReactNode }) => (
-      <a href={href} className="text-blue-600 hover:underline">{children}</a>
-    ),
-    h1: ({ children }: { children: React.ReactNode }) => <h1 className="text-sm font-bold mb-1">{children}</h1>,
-    h2: ({ children }: { children: React.ReactNode }) => <h2 className="text-xs font-bold mb-1">{children}</h2>,
-    h3: ({ children }: { children: React.ReactNode }) => <h3 className="text-xs font-semibold mb-1">{children}</h3>,
-    code: ({ inline, className, children }: { inline?: boolean, className?: string, children: React.ReactNode }) => {
-      if (inline) {
-        return <code className="bg-gray-100 rounded px-0.5">{children}</code>
-      }
-      return (
-        <pre className="block bg-gray-100 rounded p-1 mb-1 text-[10px]">
-          <code className={className}>{children}</code>
-        </pre>
-      )
-    }
+  const MarkdownRenderer = (props: { className?: string, markdown?: string }) => {
+    return (
+      // eslint-disable-next-line 
+      <ReactMarkdown className={props.className} children={props.markdown || defaultMarkdown} />
+    )
   }
 
   return (
@@ -124,12 +110,7 @@ export default function UWVChatbot() {
           {messages.map((message, index) => (
             <div key={index} className={`flex items-start ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={getMessageClassName(message.role)}>
-                <ReactMarkdown components={components}>
-                  {message.content}
-                </ReactMarkdown>
-                <ReactMarkdown>{message.content}</ReactMarkdown>
-                {// eslint-disable-next-line 
-                }<ReactMarkdown key={index} children={[message.content]} />
+                <MarkdownRenderer className="markdown-content" markdown={message.content} />
               </div>
             </div>
           ))}
