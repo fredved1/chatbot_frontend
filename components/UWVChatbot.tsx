@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 
@@ -17,15 +17,7 @@ export default function UWVChatbot() {
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    startNewConversation()
-  }, [])
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
-
-  const startNewConversation = async () => {
+  const startNewConversation = useCallback(async () => {
     setIsLoading(true)
     try {
       const response = await fetch(`${API_URL}/api/start-conversation`, { method: 'POST' })
@@ -33,12 +25,20 @@ export default function UWVChatbot() {
       const data = await response.json()
       setMessages([{ role: 'assistant', content: data.message }])
     } catch (error) {
-      console.error('Error starting new conversation:', error)
+      console.error('Error starting new conversation:', error instanceof Error ? error.message : String(error))
       setMessages([{ role: 'assistant', content: 'Sorry, er is een fout opgetreden bij het starten van een nieuwe conversatie.' }])
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    startNewConversation()
+  }, [startNewConversation])
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
 
   const handleSend = async () => {
     if (input.trim() === '') return
@@ -57,7 +57,7 @@ export default function UWVChatbot() {
       const data = await response.json()
       setMessages(prev => [...prev, { role: 'assistant', content: data.response }])
     } catch (error) {
-      console.error('Error sending message:', error)
+      console.error('Error sending message:', error instanceof Error ? error.message : String(error))
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: 'Sorry, er is een fout opgetreden bij het verzenden van het bericht.' 
@@ -67,23 +67,38 @@ export default function UWVChatbot() {
     }
   }
 
-  const components: Record<string, React.ComponentType<any>> = {
-    p: ({ children }) => <p className="mb-1">{children}</p>,
-    ul: ({ children }) => <ul className="list-disc pl-4 mb-1">{children}</ul>,
-    ol: ({ children }) => <ol className="list-decimal pl-4 mb-1">{children}</ol>,
-    li: ({ children }) => <li className="mb-0.5">{children}</li>,
-    a: ({ href, children }) => <a href={href} className="text-blue-600 hover:underline">{children}</a>,
-    h1: ({ children }) => <h1 className="text-sm font-bold mb-1">{children}</h1>,
-    h2: ({ children }) => <h2 className="text-xs font-bold mb-1">{children}</h2>,
-    h3: ({ children }) => <h3 className="text-xs font-semibold mb-1">{children}</h3>,
-    code: ({ inline, className, children }) => {
-      const match = /language-(\w+)/.exec(className || '')
-      return !inline ? (
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSend()
+    }
+  }
+
+  const getMessageClassName = (role: 'user' | 'assistant') => {
+    const baseClass = "max-w-[75%] p-2 rounded-lg text-xs"
+    return role === 'user' 
+      ? `${baseClass} bg-[#007bc7] text-white` 
+      : `${baseClass} bg-gray-200 text-[#333333]`
+  }
+
+  const components = {
+    p: ({ children }: { children: React.ReactNode }) => <p className="mb-1">{children}</p>,
+    ul: ({ children }: { children: React.ReactNode }) => <ul className="list-disc pl-4 mb-1">{children}</ul>,
+    ol: ({ children }: { children: React.ReactNode }) => <ol className="list-decimal pl-4 mb-1">{children}</ol>,
+    li: ({ children }: { children: React.ReactNode }) => <li className="mb-0.5">{children}</li>,
+    a: ({ href, children }: { href?: string, children: React.ReactNode }) => (
+      <a href={href} className="text-blue-600 hover:underline">{children}</a>
+    ),
+    h1: ({ children }: { children: React.ReactNode }) => <h1 className="text-sm font-bold mb-1">{children}</h1>,
+    h2: ({ children }: { children: React.ReactNode }) => <h2 className="text-xs font-bold mb-1">{children}</h2>,
+    h3: ({ children }: { children: React.ReactNode }) => <h3 className="text-xs font-semibold mb-1">{children}</h3>,
+    code: ({ inline, className, children }: { inline?: boolean, className?: string, children: React.ReactNode }) => {
+      if (inline) {
+        return <code className="bg-gray-100 rounded px-0.5">{children}</code>
+      }
+      return (
         <pre className="block bg-gray-100 rounded p-1 mb-1 text-[10px]">
           <code className={className}>{children}</code>
         </pre>
-      ) : (
-        <code className="bg-gray-100 rounded px-0.5">{children}</code>
       )
     }
   }
@@ -108,9 +123,7 @@ export default function UWVChatbot() {
         <div className="space-y-2">
           {messages.map((message, index) => (
             <div key={index} className={`flex items-start ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[75%] p-2 rounded-lg text-xs ${
-                message.role === 'user' ? 'bg-[#007bc7] text-white' : 'bg-gray-200 text-[#333333]'
-              }`}>
+              <div className={getMessageClassName(message.role)}>
                 <ReactMarkdown components={components}>
                   {message.content}
                 </ReactMarkdown>
@@ -127,9 +140,8 @@ export default function UWVChatbot() {
             placeholder="Typ uw vraag hier..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            className="flex-grow border border-[#007bc7] p-1 rounded text-xs"
-            style={{ color: 'black' }}
+            onKeyPress={handleKeyPress}
+            className="flex-grow border border-[#007bc7] p-1 rounded text-xs text-black"
           />
           <button
             onClick={handleSend}
