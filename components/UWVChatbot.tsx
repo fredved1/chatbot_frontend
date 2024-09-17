@@ -168,11 +168,33 @@ export default function UWVChatbot() {
           <div className="space-y-2">
             {messages.map((message, index) => (
               <div key={index} className={`flex items-start ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                {message.role === 'assistant' && (
+                  <div className="flex-shrink-0 mr-2">
+                    <Image
+                      src="/ai-icon.png"
+                      alt="AI"
+                      width={24}
+                      height={24}
+                      className="rounded-full"
+                    />
+                  </div>
+                )}
                 <div className={`max-w-[75%] p-2 rounded-lg ${
                   message.role === 'user' ? 'bg-[#007bc7] text-white' : 'bg-gray-200 text-[#333333]'
                 }`}>
                   <MarkdownRenderer markdown={message.content} />
                 </div>
+                {message.role === 'user' && (
+                  <div className="flex-shrink-0 ml-2">
+                    <Image
+                      src="/user-icon.png"
+                      alt="User"
+                      width={24}
+                      height={24}
+                      className="rounded-full"
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>
