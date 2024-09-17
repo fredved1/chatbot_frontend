@@ -74,18 +74,18 @@ export default function UWVChatbot() {
       <ReactMarkdown 
         className={`markdown-content ${props.className || ''}`}
         components={{
-          p: ({node, ...props}) => <p className="mb-2" {...props} />,
-          ul: ({node, ...props}) => <ul className="list-disc pl-4 mb-2" {...props} />,
-          ol: ({node, ...props}) => <ol className="list-decimal pl-4 mb-2" {...props} />,
-          li: ({node, ...props}) => <li className="mb-1" {...props} />,
-          a: ({node, ...props}) => <a className="text-blue-600 hover:underline" {...props} />,
-          h1: ({node, ...props}) => <h1 className="text-lg font-bold mb-2" {...props} />,
-          h2: ({node, ...props}) => <h2 className="text-base font-bold mb-2" {...props} />,
-          h3: ({node, ...props}) => <h3 className="text-sm font-bold mb-2" {...props} />,
-          code: ({node, inline, ...props}) => 
+          p: ({children}) => <p className="mb-2">{children}</p>,
+          ul: ({children}) => <ul className="list-disc pl-4 mb-2">{children}</ul>,
+          ol: ({children}) => <ol className="list-decimal pl-4 mb-2">{children}</ol>,
+          li: ({children}) => <li className="mb-1">{children}</li>,
+          a: ({href, children}) => <a href={href} className="text-blue-600 hover:underline">{children}</a>,
+          h1: ({children}) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
+          h2: ({children}) => <h2 className="text-base font-bold mb-2">{children}</h2>,
+          h3: ({children}) => <h3 className="text-sm font-bold mb-2">{children}</h3>,
+          code: ({inline, className, children}) => 
             inline 
-              ? <code className="bg-gray-100 rounded px-1" {...props} />
-              : <code className="block bg-gray-100 rounded p-2 mb-2" {...props} />
+              ? <code className="bg-gray-100 rounded px-1">{children}</code>
+              : <code className="block bg-gray-100 rounded p-2 mb-2">{children}</code>
         }}
       >
         {props.markdown || defaultMarkdown}
