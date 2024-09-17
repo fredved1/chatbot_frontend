@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
-import { Components } from 'react-markdown/lib/ast-to-react'
 
 type Message = {
   role: 'user' | 'assistant'
@@ -81,18 +80,18 @@ export default function UWVChatbot() {
       : `${baseClass} bg-gray-200 text-[#333333]`
   }
 
-  const components: Components = {
-    p: ({ children }) => <p className="mb-1">{children}</p>,
-    ul: ({ children }) => <ul className="list-disc pl-4 mb-1">{children}</ul>,
-    ol: ({ children }) => <ol className="list-decimal pl-4 mb-1">{children}</ol>,
-    li: ({ children }) => <li className="mb-0.5">{children}</li>,
-    a: ({ href, children }) => (
+  const components = {
+    p: ({ children }: { children: React.ReactNode }) => <p className="mb-1">{children}</p>,
+    ul: ({ children }: { children: React.ReactNode }) => <ul className="list-disc pl-4 mb-1">{children}</ul>,
+    ol: ({ children }: { children: React.ReactNode }) => <ol className="list-decimal pl-4 mb-1">{children}</ol>,
+    li: ({ children }: { children: React.ReactNode }) => <li className="mb-0.5">{children}</li>,
+    a: ({ href, children }: { href?: string, children: React.ReactNode }) => (
       <a href={href} className="text-blue-600 hover:underline">{children}</a>
     ),
-    h1: ({ children }) => <h1 className="text-sm font-bold mb-1">{children}</h1>,
-    h2: ({ children }) => <h2 className="text-xs font-bold mb-1">{children}</h2>,
-    h3: ({ children }) => <h3 className="text-xs font-semibold mb-1">{children}</h3>,
-    code: ({ inline, className, children }) => {
+    h1: ({ children }: { children: React.ReactNode }) => <h1 className="text-sm font-bold mb-1">{children}</h1>,
+    h2: ({ children }: { children: React.ReactNode }) => <h2 className="text-xs font-bold mb-1">{children}</h2>,
+    h3: ({ children }: { children: React.ReactNode }) => <h3 className="text-xs font-semibold mb-1">{children}</h3>,
+    code: ({ inline, className, children }: { inline?: boolean, className?: string, children: React.ReactNode }) => {
       if (inline) {
         return <code className="bg-gray-100 rounded px-0.5">{children}</code>
       }
@@ -128,7 +127,6 @@ export default function UWVChatbot() {
                 <ReactMarkdown components={components}>
                   {message.content}
                 </ReactMarkdown>
-                {/* Alternative ReactMarkdown usage */}
                 <ReactMarkdown>{message.content}</ReactMarkdown>
                 {// eslint-disable-next-line 
                 }<ReactMarkdown key={index} children={[message.content]} />
