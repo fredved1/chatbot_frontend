@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
-import { Components } from 'react-markdown/lib/ast-to-react'
+import type { Components } from 'react-markdown'
 
 // ... rest of your component code ...
 
@@ -74,15 +74,15 @@ export default function UWVChatbot() {
 
   const MarkdownRenderer = (props: { className?: string, markdown?: string }) => {
     const components: Components = {
-      p: ({children}) => <p className="mb-2">{children}</p>,
-      ul: ({children}) => <ul className="list-disc pl-4 mb-2">{children}</ul>,
-      ol: ({children}) => <ol className="list-decimal pl-4 mb-2">{children}</ol>,
-      li: ({children}) => <li className="mb-1">{children}</li>,
-      a: ({href, children}) => <a href={href} className="text-blue-600 hover:underline">{children}</a>,
-      h1: ({children}) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
-      h2: ({children}) => <h2 className="text-base font-bold mb-2">{children}</h2>,
-      h3: ({children}) => <h3 className="text-sm font-bold mb-2">{children}</h3>,
-      code: ({inline, className, children}) => {
+      p: ({children}: {children: React.ReactNode}) => <p className="mb-2">{children}</p>,
+      ul: ({children}: {children: React.ReactNode}) => <ul className="list-disc pl-4 mb-2">{children}</ul>,
+      ol: ({children}: {children: React.ReactNode}) => <ol className="list-decimal pl-4 mb-2">{children}</ol>,
+      li: ({children}: {children: React.ReactNode}) => <li className="mb-1">{children}</li>,
+      a: ({href, children}: {href?: string, children: React.ReactNode}) => <a href={href} className="text-blue-600 hover:underline">{children}</a>,
+      h1: ({children}: {children: React.ReactNode}) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
+      h2: ({children}: {children: React.ReactNode}) => <h2 className="text-base font-bold mb-2">{children}</h2>,
+      h3: ({children}: {children: React.ReactNode}) => <h3 className="text-sm font-bold mb-2">{children}</h3>,
+      code: ({inline, className, children}: {inline?: boolean, className?: string, children: React.ReactNode}) => {
         const match = /language-(\w+)/.exec(className || '')
         return !inline && match ? (
           <code className="block bg-gray-100 rounded p-2 mb-2">{children}</code>
