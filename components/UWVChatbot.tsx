@@ -13,8 +13,8 @@ type Message = {
   content: string
 }
 
-const API_URL = 'http://localhost:5001'
-// const API_URL = 'https://uwvchatbot-f850ea49bdeb.herokuapp.com/'
+// const API_URL = 'http://localhost:5001'
+const API_URL = 'https://uwvchatbot-f850ea49bdeb.herokuapp.com/'
 const defaultMarkdown = 'No content available.'
 
 export default function UWVChatbot() {
