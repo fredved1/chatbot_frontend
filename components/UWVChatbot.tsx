@@ -7,9 +7,6 @@ import ReactMarkdown from 'react-markdown'
 
 // ... rest of your component code ...
 
-export default function UWVChatbot() {
-  // ... component implementation ...
-}
 type Message = {
   role: 'user' | 'assistant'
   content: string
