@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
-import '../styles/markdown-styles.css'
 
 type Message = {
   role: 'user' | 'assistant'
@@ -95,55 +94,101 @@ export default function UWVChatbot() {
   }
 
   return (
-    <div className="flex flex-col h-screen max-h-[600px] w-full sm:max-w-md mx-auto bg-gray-100 shadow-lg rounded-lg overflow-hidden">
-      <header className="bg-[#007bc7] text-white p-2 flex-shrink-0">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <Image src="/uwv-logo.png" alt="UWV Logo" width={20} height={20} className="mr-2" />
-            <h1 className="text-base font-bold">UWV Chatbot</h1>
-          </div>
-          <button
-            onClick={startNewConversation}
-            className="bg-white text-[#007bc7] border border-[#007bc7] hover:bg-[#e6f2ff] px-2 py-1 rounded text-xs"
-          >
-            Nieuw
-          </button>
-        </div>
-      </header>
-      <main className="flex-grow overflow-auto p-2 min-h-0">
-        <div className="space-y-2">
-          {messages.map((message, index) => (
-            <div key={index} className={`flex items-start ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[75%] p-2 rounded-lg ${
-                message.role === 'user' ? 'bg-[#007bc7] text-white' : 'bg-gray-200 text-[#333333]'
-              }`}>
-                <MarkdownRenderer markdown={message.content} />
-              </div>
+    <>
+      <style jsx global>{`
+        .markdown-content {
+          font-size: 0.875rem;
+          line-height: 1.25rem;
+        }
+        .markdown-content p {
+          margin-bottom: 0.5rem;
+        }
+        .markdown-content ul, .markdown-content ol {
+          margin-left: 1.5rem;
+          margin-bottom: 0.5rem;
+        }
+        .markdown-content li {
+          margin-bottom: 0.25rem;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+          font-weight: bold;
+          margin-top: 1rem;
+          margin-bottom: 0.5rem;
+        }
+        .markdown-content h1 {
+          font-size: 1.25rem;
+        }
+        .markdown-content h2 {
+          font-size: 1.125rem;
+        }
+        .markdown-content h3 {
+          font-size: 1rem;
+        }
+        .markdown-content pre {
+          background-color: #f3f4f6;
+          padding: 0.5rem;
+          border-radius: 0.25rem;
+          overflow-x: auto;
+        }
+        .markdown-content code {
+          font-family: monospace;
+          font-size: 0.875rem;
+        }
+        .markdown-content a {
+          color: #2563eb;
+          text-decoration: underline;
+        }
+      `}</style>
+      <div className="flex flex-col h-screen max-h-[600px] w-full sm:max-w-md mx-auto bg-gray-100 shadow-lg rounded-lg overflow-hidden">
+        <header className="bg-[#007bc7] text-white p-2 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Image src="/uwv-logo.png" alt="UWV Logo" width={20} height={20} className="mr-2" />
+              <h1 className="text-base font-bold">UWV Chatbot</h1>
             </div>
-          ))}
-        </div>
-        <div ref={messagesEndRef} />
-      </main>
-      <footer className="bg-white p-2 border-t border-gray-200 flex-shrink-0">
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            placeholder="Typ uw vraag hier..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            className="flex-grow border border-[#007bc7] p-1 rounded text-xs"
-            style={{ color: 'black' }}
-          />
-          <button
-            onClick={handleSend}
-            disabled={isLoading}
-            className="bg-[#007bc7] text-white hover:bg-[#005b9e] px-2 py-1 rounded disabled:opacity-50 text-xs"
-          >
-            {isLoading ? '...' : 'Zend'}
-          </button>
-        </div>
-      </footer>
-    </div>
+            <button
+              onClick={startNewConversation}
+              className="bg-white text-[#007bc7] border border-[#007bc7] hover:bg-[#e6f2ff] px-2 py-1 rounded text-xs"
+            >
+              Nieuw
+            </button>
+          </div>
+        </header>
+        <main className="flex-grow overflow-auto p-2 min-h-0">
+          <div className="space-y-2">
+            {messages.map((message, index) => (
+              <div key={index} className={`flex items-start ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[75%] p-2 rounded-lg ${
+                  message.role === 'user' ? 'bg-[#007bc7] text-white' : 'bg-gray-200 text-[#333333]'
+                }`}>
+                  <MarkdownRenderer markdown={message.content} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div ref={messagesEndRef} />
+        </main>
+        <footer className="bg-white p-2 border-t border-gray-200 flex-shrink-0">
+          <div className="flex space-x-2">
+            <input
+              type="text"
+              placeholder="Typ uw vraag hier..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+              className="flex-grow border border-[#007bc7] p-1 rounded text-xs"
+              style={{ color: 'black' }}
+            />
+            <button
+              onClick={handleSend}
+              disabled={isLoading}
+              className="bg-[#007bc7] text-white hover:bg-[#005b9e] px-2 py-1 rounded disabled:opacity-50 text-xs"
+            >
+              {isLoading ? '...' : 'Zend'}
+            </button>
+          </div>
+        </footer>
+      </div>
+    </>
   )
 }
