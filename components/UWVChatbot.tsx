@@ -67,6 +67,27 @@ export default function UWVChatbot() {
     }
   }
 
+  const components: Record<string, React.ComponentType<any>> = {
+    p: ({ children }) => <p className="mb-1">{children}</p>,
+    ul: ({ children }) => <ul className="list-disc pl-4 mb-1">{children}</ul>,
+    ol: ({ children }) => <ol className="list-decimal pl-4 mb-1">{children}</ol>,
+    li: ({ children }) => <li className="mb-0.5">{children}</li>,
+    a: ({ href, children }) => <a href={href} className="text-blue-600 hover:underline">{children}</a>,
+    h1: ({ children }) => <h1 className="text-sm font-bold mb-1">{children}</h1>,
+    h2: ({ children }) => <h2 className="text-xs font-bold mb-1">{children}</h2>,
+    h3: ({ children }) => <h3 className="text-xs font-semibold mb-1">{children}</h3>,
+    code: ({ inline, className, children }) => {
+      const match = /language-(\w+)/.exec(className || '')
+      return !inline ? (
+        <pre className="block bg-gray-100 rounded p-1 mb-1 text-[10px]">
+          <code className={className}>{children}</code>
+        </pre>
+      ) : (
+        <code className="bg-gray-100 rounded px-0.5">{children}</code>
+      )
+    }
+  }
+
   return (
     <div className="flex flex-col h-screen max-h-[600px] w-full sm:max-w-md mx-auto bg-gray-100 shadow-lg rounded-lg overflow-hidden">
       <header className="bg-[#007bc7] text-white p-2 flex-shrink-0">
@@ -90,22 +111,7 @@ export default function UWVChatbot() {
               <div className={`max-w-[75%] p-2 rounded-lg text-xs ${
                 message.role === 'user' ? 'bg-[#007bc7] text-white' : 'bg-gray-200 text-[#333333]'
               }`}>
-                <ReactMarkdown
-                  components={{
-                    p: ({...props}) => <p className="mb-1" {...props} />,
-                    ul: ({...props}) => <ul className="list-disc pl-4 mb-1" {...props} />,
-                    ol: ({...props}) => <ol className="list-decimal pl-4 mb-1" {...props} />,
-                    li: ({...props}) => <li className="mb-0.5" {...props} />,
-                    a: ({...props}) => <a className="text-blue-600 hover:underline" {...props} />,
-                    h1: ({...props}) => <h1 className="text-sm font-bold mb-1" {...props} />,
-                    h2: ({...props}) => <h2 className="text-xs font-bold mb-1" {...props} />,
-                    h3: ({...props}) => <h3 className="text-xs font-semibold mb-1" {...props} />,
-                    code: ({inline, ...props}) => 
-                      inline 
-                        ? <code className="bg-gray-100 rounded px-0.5" {...props} />
-                        : <code className="block bg-gray-100 rounded p-1 mb-1 text-[10px]" {...props} />
-                  }}
-                >
+                <ReactMarkdown components={components}>
                   {message.content}
                 </ReactMarkdown>
               </div>
