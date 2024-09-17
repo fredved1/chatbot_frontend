@@ -74,20 +74,20 @@ export default function UWVChatbot() {
 
   const MarkdownRenderer = (props: { className?: string, markdown?: string }) => {
     const components: Components = {
-      p: ({children}: {children: React.ReactNode}) => <p className="mb-2">{children}</p>,
-      ul: ({children}: {children: React.ReactNode}) => <ul className="list-disc pl-4 mb-2">{children}</ul>,
-      ol: ({children}: {children: React.ReactNode}) => <ol className="list-decimal pl-4 mb-2">{children}</ol>,
-      li: ({children}: {children: React.ReactNode}) => <li className="mb-1">{children}</li>,
-      a: ({href, children}: {href?: string, children: React.ReactNode}) => <a href={href} className="text-blue-600 hover:underline">{children}</a>,
-      h1: ({children}: {children: React.ReactNode}) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
-      h2: ({children}: {children: React.ReactNode}) => <h2 className="text-base font-bold mb-2">{children}</h2>,
-      h3: ({children}: {children: React.ReactNode}) => <h3 className="text-sm font-bold mb-2">{children}</h3>,
-      code: ({inline, className, children}: {inline?: boolean, className?: string, children: React.ReactNode}) => {
+      p: ({ children, ...props }) => <p className="mb-2" {...props}>{children}</p>,
+      ul: ({ children, ...props }) => <ul className="list-disc pl-4 mb-2" {...props}>{children}</ul>,
+      ol: ({ children, ...props }) => <ol className="list-decimal pl-4 mb-2" {...props}>{children}</ol>,
+      li: ({ children, ...props }) => <li className="mb-1" {...props}>{children}</li>,
+      a: ({ href, children, ...props }) => <a href={href} className="text-blue-600 hover:underline" {...props}>{children}</a>,
+      h1: ({ children, ...props }) => <h1 className="text-lg font-bold mb-2" {...props}>{children}</h1>,
+      h2: ({ children, ...props }) => <h2 className="text-base font-bold mb-2" {...props}>{children}</h2>,
+      h3: ({ children, ...props }) => <h3 className="text-sm font-bold mb-2" {...props}>{children}</h3>,
+      code: ({ className, children, ...props }) => {
         const match = /language-(\w+)/.exec(className || '')
-        return !inline && match ? (
-          <code className="block bg-gray-100 rounded p-2 mb-2">{children}</code>
+        return match ? (
+          <code className="block bg-gray-100 rounded p-2 mb-2" {...props}>{children}</code>
         ) : (
-          <code className="bg-gray-100 rounded px-1">{children}</code>
+          <code className="bg-gray-100 rounded px-1" {...props}>{children}</code>
         )
       }
     }
