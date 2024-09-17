@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
+import '../styles/markdown-styles.css'
 
 type Message = {
   role: 'user' | 'assistant'
@@ -10,7 +11,6 @@ type Message = {
 }
 
 const API_URL = 'http://localhost:5001'
-
 const defaultMarkdown = 'No content available.'
 
 export default function UWVChatbot() {
@@ -19,7 +19,15 @@ export default function UWVChatbot() {
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const startNewConversation = useCallback(async () => {
+  useEffect(() => {
+    startNewConversation()
+  }, [])
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
+
+  const startNewConversation = async () => {
     setIsLoading(true)
     try {
       const response = await fetch(`${API_URL}/api/start-conversation`, { method: 'POST' })
@@ -27,20 +35,12 @@ export default function UWVChatbot() {
       const data = await response.json()
       setMessages([{ role: 'assistant', content: data.message }])
     } catch (error) {
-      console.error('Error starting new conversation:', error instanceof Error ? error.message : String(error))
+      console.error('Error starting new conversation:', error)
       setMessages([{ role: 'assistant', content: 'Sorry, er is een fout opgetreden bij het starten van een nieuwe conversatie.' }])
     } finally {
       setIsLoading(false)
     }
-  }, [])
-
-  useEffect(() => {
-    startNewConversation()
-  }, [startNewConversation])
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+  }
 
   const handleSend = async () => {
     if (input.trim() === '') return
@@ -59,7 +59,7 @@ export default function UWVChatbot() {
       const data = await response.json()
       setMessages(prev => [...prev, { role: 'assistant', content: data.response }])
     } catch (error) {
-      console.error('Error sending message:', error instanceof Error ? error.message : String(error))
+      console.error('Error sending message:', error)
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: 'Sorry, er is een fout opgetreden bij het verzenden van het bericht.' 
@@ -69,24 +69,29 @@ export default function UWVChatbot() {
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSend()
-    }
-  }
-
-  const getMessageClassName = (role: 'user' | 'assistant') => {
-    const baseClass = "max-w-[75%] p-2 rounded-lg text-xs"
-    return role === 'user' 
-      ? `${baseClass} bg-[#007bc7] text-white` 
-      : `${baseClass} bg-gray-200 text-[#333333]`
-  }
-
   const MarkdownRenderer = (props: { className?: string, markdown?: string }) => {
     return (
       // eslint-disable-next-line 
-      <ReactMarkdown className={props.className} children={props.markdown || defaultMarkdown} />
-    )
+      <ReactMarkdown 
+        className={`markdown-content ${props.className || ''}`}
+        components={{
+          p: ({node, ...props}) => <p className="mb-2" {...props} />,
+          ul: ({node, ...props}) => <ul className="list-disc pl-4 mb-2" {...props} />,
+          ol: ({node, ...props}) => <ol className="list-decimal pl-4 mb-2" {...props} />,
+          li: ({node, ...props}) => <li className="mb-1" {...props} />,
+          a: ({node, ...props}) => <a className="text-blue-600 hover:underline" {...props} />,
+          h1: ({node, ...props}) => <h1 className="text-lg font-bold mb-2" {...props} />,
+          h2: ({node, ...props}) => <h2 className="text-base font-bold mb-2" {...props} />,
+          h3: ({node, ...props}) => <h3 className="text-sm font-bold mb-2" {...props} />,
+          code: ({node, inline, ...props}) => 
+            inline 
+              ? <code className="bg-gray-100 rounded px-1" {...props} />
+              : <code className="block bg-gray-100 rounded p-2 mb-2" {...props} />
+        }}
+      >
+        {props.markdown || defaultMarkdown}
+      </ReactMarkdown>
+    );
   }
 
   return (
@@ -109,8 +114,10 @@ export default function UWVChatbot() {
         <div className="space-y-2">
           {messages.map((message, index) => (
             <div key={index} className={`flex items-start ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={getMessageClassName(message.role)}>
-                <MarkdownRenderer className="markdown-content" markdown={message.content} />
+              <div className={`max-w-[75%] p-2 rounded-lg ${
+                message.role === 'user' ? 'bg-[#007bc7] text-white' : 'bg-gray-200 text-[#333333]'
+              }`}>
+                <MarkdownRenderer markdown={message.content} />
               </div>
             </div>
           ))}
@@ -124,8 +131,9 @@ export default function UWVChatbot() {
             placeholder="Typ uw vraag hier..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            className="flex-grow border border-[#007bc7] p-1 rounded text-xs text-black"
+            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+            className="flex-grow border border-[#007bc7] p-1 rounded text-xs"
+            style={{ color: 'black' }}
           />
           <button
             onClick={handleSend}
