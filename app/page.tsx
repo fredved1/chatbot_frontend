@@ -1,7 +1,7 @@
 import UWVChatbot from '../components/UWVChatbot'
 import MaintenancePage from '../components/MaintenancePage' // Zorg ervoor dat je deze component maakt
 
-const isUnderMaintenance = true;
+const isUnderMaintenance = false;
 
 export default function Home() {
   if (isUnderMaintenance) {
