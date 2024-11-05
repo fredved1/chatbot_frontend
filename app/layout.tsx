@@ -16,7 +16,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Overheids Gemak",
-  description: "Een chatbot voor gemakkelijke overheidsdiensten",
+  description: "Een chatbot voor Bot Lease",
 };
 
 export default function RootLayout({
